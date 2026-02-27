@@ -4,16 +4,19 @@ using UnityEngine;
 public class BottleController : MonoBehaviour
 {
     [Header("Bottle Logic")]
-    public List<Color> layers = new List<Color>(); // لیست رنگ‌های لایه‌های آب
-    public int maxLayers = 4; // حداکثر ظرفیت بطری
+    public List<Color> layers = new List<Color>();
+    public int maxLayers = 4;
 
-    [Header("Visual Connection")]
+    [Header("Components")]
     private WaterShaderController visualController;
+    private VictoryEffect victoryEffect;
+    private BottleAnimation bottleAnim;
 
     void Awake()
     {
-        // پیدا کردن اسکریپت گرافیکی روی همین شیء
         visualController = GetComponent<WaterShaderController>();
+        victoryEffect = GetComponent<VictoryEffect>();
+        bottleAnim = GetComponent<BottleAnimation>();
     }
 
     void Start()
@@ -21,68 +24,61 @@ public class BottleController : MonoBehaviour
         UpdateVisuals();
     }
 
-    // متد برای گرفتن رنگ بالاترین لایه
     public Color GetTopColor()
     {
-        if (layers.Count > 0)
-            return layers[layers.Count - 1];
+        if (layers.Count > 0) return layers[layers.Count - 1];
         return Color.clear;
     }
 
-    // آیا می‌توان از این بطری آب برداشت؟
-    public bool CanExtract()
-    {
-        return layers.Count > 0;
-    }
+    public bool CanExtract() => layers.Count > 0;
 
-    // آیا می‌توان در این بطری آب ریخت؟
     public bool CanFill(Color incomingColor)
     {
-        if (layers.Count == 0) return true; // بطری خالی است
-        if (layers.Count >= maxLayers) return false; // بطری پر است
-        return GetTopColor() == incomingColor; // رنگ‌ها باید یکی باشند
+        if (layers.Count == 0) return true;
+        if (layers.Count >= maxLayers) return false;
+        return GetTopColor() == incomingColor;
     }
 
-    // متد برداشتن رنگ (پاپ کردن)
     public Color PopColor()
     {
         Color topColor = GetTopColor();
         layers.RemoveAt(layers.Count - 1);
-        
-        UpdateVisuals(); // فراخوانی گرافیک برای حذف لایه
+        UpdateVisuals();
         return topColor;
     }
 
-    // متد اضافه کردن رنگ
     public void AddColor(Color newColor)
     {
         if (layers.Count < maxLayers)
         {
             layers.Add(newColor);
-            UpdateVisuals(); // فراخوانی گرافیک برای رسم لایه جدید
+            UpdateVisuals();
+            
+            // چک کردن خودکار برای افکت پیروزی
+            if (IsSolved() && layers.Count == maxLayers)
+            {
+                if (victoryEffect != null) victoryEffect.PlayWinEffect();
+            }
         }
     }
 
-    // هماهنگی با بخش گرافیکی
     public void UpdateVisuals()
     {
-        if (visualController != null)
-        {
-            visualController.RefreshVisuals();
-        }
+        if (visualController != null) visualController.RefreshVisuals();
     }
 
-    // بررسی اینکه آیا این بطری به طور کامل حل شده است؟
     public bool IsSolved()
     {
-        if (layers.Count == 0) return true; // بطری خالی به عنوان حل شده فرض می‌شود
-        if (layers.Count != maxLayers) return false; // بطری نیمه‌پر حل شده نیست
-
+        if (layers.Count == 0) return true;
+        if (layers.Count != maxLayers) return false;
         Color firstColor = layers[0];
-        foreach (var c in layers)
-        {
-            if (c != firstColor) return false; // اگر رنگی مخالف رنگ اول باشد
-        }
+        foreach (var c in layers) if (c != firstColor) return false;
         return true;
+    }
+
+    // متد کمکی برای انیمیشن انتخاب
+    public void SetSelected(bool selected)
+    {
+        if (bottleAnim != null) bottleAnim.LiftBottle(selected);
     }
 }
