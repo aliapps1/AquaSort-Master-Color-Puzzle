@@ -1,18 +1,27 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    [Header("Game Settings")]
     public List<BottleController> allBottles = new List<BottleController>();
-    
     private BottleController selectedBottle;
 
-    void Awake() { Instance = this; }
+    [Header("Status")]
+    public bool isGameFinished = false;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
 
     void Update()
     {
+        if (isGameFinished) return;
+
+        // مدیریت لمس صفحه در موبایل و کلیک موس در کامپیوتر
         if (Input.GetMouseButtonDown(0))
         {
             HandleInput();
@@ -21,27 +30,44 @@ public class GameManager : MonoBehaviour
 
     void HandleInput()
     {
+        // تشخیص بطری لمس شده
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        
         if (hit.collider != null)
         {
             BottleController clickedBottle = hit.collider.GetComponent<BottleController>();
 
             if (selectedBottle == null)
             {
-                if (clickedBottle.CanExtract()) selectedBottle = clickedBottle;
+                // انتخاب بطری اول
+                if (clickedBottle.CanExtract())
+                {
+                    selectedBottle = clickedBottle;
+                    // اینجا می‌توان یک انیمیشن کوچک برای بالا آمدن بطری اضافه کرد
+                }
             }
             else
             {
-                if (clickedBottle != selectedBottle && clickedBottle.CanFill(selectedBottle.layers[selectedBottle.layers.Count-1]))
+                // انتخاب بطری دوم برای ریختن آب
+                if (clickedBottle != selectedBottle && clickedBottle.CanFill(selectedBottle.GetTopColor()))
                 {
-                    // انتقال رنگ
-                    Color colorToMove = selectedBottle.PopColor();
-                    clickedBottle.AddColor(colorToMove);
-                    CheckWinCondition();
+                    MoveColor(selectedBottle, clickedBottle);
                 }
-                selectedBottle = null;
+                else
+                {
+                    selectedBottle = null; // لغو انتخاب اگر انتقال ممکن نباشد
+                }
             }
         }
+    }
+
+    void MoveColor(BottleController source, BottleController destination)
+    {
+        Color colorToMove = source.PopColor();
+        destination.AddColor(colorToMove);
+        selectedBottle = null;
+
+        CheckWinCondition();
     }
 
     void CheckWinCondition()
@@ -50,7 +76,22 @@ public class GameManager : MonoBehaviour
         {
             if (!bottle.IsSolved()) return;
         }
-        Debug.Log("You Won! Loading Next Level...");
-        // کد رفتن به مرحله بعد
+
+        // --- بخش هماهنگ سازی شده با سایر فایل‌ها ---
+        isGameFinished = true;
+        Debug.Log("مرحله با موفقیت تمام شد!");
+
+        // ۱. نمایش تبلیغ برای درآمدزایی
+        if (AdManager.Instance != null) 
+            AdManager.Instance.ShowInterstitialAd();
+
+        // ۲. رفتن به مرحله بعد و ذخیره سازی
+        if (LevelSystem.Instance != null)
+            Invoke("NextLevel", 2f); // ۲ ثانیه تاخیر برای حس پیروزی کاربر
+    }
+
+    void NextLevel()
+    {
+        LevelSystem.Instance.CompleteLevel();
     }
 }
