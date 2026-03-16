@@ -1,126 +1,47 @@
 :root {
-    --bg: #0f172a;
-    --accent: #fbbf24;
-    --tube-bg: rgba(255, 255, 255, 0.1);
+    --bg: #050a18;
+    --accent: #00d2ff;
+    --tube-bg: rgba(255, 255, 255, 0.08);
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg);
-    color: white;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    touch-action: manipulation;
+    margin: 0; background: var(--bg); color: white;
+    font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center;
+    overflow: hidden; touch-action: manipulation;
 }
 
-.game-ui {
-    width: 100%;
-    max-width: 500px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+.game-ui { width: 100%; max-width: 600px; height: 100vh; display: flex; flex-direction: column; align-items: center; }
 
-.header {
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-}
+.header { width: 90%; display: flex; justify-content: space-between; padding: 25px 0; }
 
-#level-display {
-    font-size: 24px;
-    font-weight: bold;
-    color: var(--accent);
-    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
-}
-
-.ui-btn {
-    background: var(--tube-bg);
-    border: 1px solid var(--accent);
-    color: white;
-    padding: 8px 15px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 5px;
-}
+#level-display { font-size: 28px; font-weight: 800; color: var(--accent); letter-spacing: 2px; }
 
 #game-board {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* نمایش تا ۵ بطری در هر ردیف */
-    gap: 12px;
-    padding: 20px;
-    margin-top: 30px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
+    padding: 10px; margin-top: 10px; transition: 0.5s;
 }
 
 .tube {
-    width: 48px;
-    height: 160px;
-    background: var(--tube-bg);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-    display: flex;
-    flex-direction: column-reverse;
-    overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
+    width: 42px; height: 140px; background: var(--tube-bg);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+    display: flex; flex-direction: column-reverse; overflow: hidden;
+    cursor: pointer; position: relative; transition: 0.3s;
 }
 
-.tube.selected {
-    transform: translateY(-20px);
-    border-color: var(--accent);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-}
+.tube.selected { transform: translateY(-25px); border-color: var(--accent); box-shadow: 0 0 25px var(--accent); }
 
-.liquid {
-    width: 100%;
-    height: 24.5%; /* هر لایه رنگ */
-    margin-bottom: 1px;
-    position: relative;
-}
+.liquid { width: 100%; height: 24.5%; margin-bottom: 1px; position: relative; }
 
 .liquid::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
+.ui-btn { background: #1a2238; border: 1.5px solid var(--accent); color: white; padding: 10px 18px; border-radius: 15px; font-weight: bold; cursor: pointer; }
 
-.modal-content {
-    background: #1e293b;
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    border: 2px solid var(--accent);
-    width: 80%;
-}
+.modal { display: none; position: fixed; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
 
-.trophy { font-size: 60px; margin-bottom: 10px; }
+.modal-content { background: #111827; padding: 40px; border-radius: 35px; text-align: center; border: 2px solid var(--accent); width: 85%; }
 
-.next-btn {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 15px 40px;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 20px;
-}
+.next-btn { background: var(--accent); color: #000; border: none; padding: 18px 50px; border-radius: 50px; font-weight: 900; font-size: 20px; margin-top: 25px; cursor: pointer; }
