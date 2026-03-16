@@ -12,24 +12,31 @@ window.onload = () => {
     initGame();
 };
 
+// راه اندازی سیستم صوتی با اولین کلیک کاربر
 function initAudio() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
 }
 
-function playSound() {
+// تولید صدای "بلپ" کوتاه برای جابجایی آب
+function playPourSound() {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
+    
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.15);
+    
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+    
     osc.connect(gain);
     gain.connect(audioCtx.destination);
+    
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.1);
+    osc.stop(audioCtx.currentTime + 0.15);
 }
 
 function loadProgress() {
@@ -54,18 +61,23 @@ function generateInfiniteLevel(lvl) {
     for(let i=0; i<colorCount; i++) {
         for(let j=0; j<4; j++) allColors.push(COLORS[i]);
     }
+    
+    // مخلوط کردن رنگ‌ها به صورت تصادفی
     allColors.sort(() => Math.random() - 0.5);
+    
     let tubes = [];
     for(let i=0; i<colorCount; i++) {
         tubes.push(allColors.slice(i*4, (i+1)*4));
     }
-    tubes.push([]); tubes.push([]);
+    tubes.push([]); tubes.push([]); // اضافه کردن بطری‌های خالی
     return tubes;
 }
 
 function render() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
+    
+    // تنظیم تعداد ستون‌ها بر اساس تعداد بطری‌ها
     let cols = tubesData.length > 5 ? 4 : 3;
     board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
@@ -84,21 +96,30 @@ function render() {
 }
 
 function handleTubeClick(i) {
-    // فعال کردن صدا با اولین کلیک کاربر روی بطری
+    // فعال کردن سیستم صوت با اولین لمس صفحه توسط کاربر
     initAudio();
 
     if (selectedIndex === null) {
-        if (tubesData[i].length > 0) selectedIndex = i;
+        if (tubesData[i].length > 0) {
+            selectedIndex = i;
+            render();
+        }
     } else {
         const from = tubesData[selectedIndex];
         const to = tubesData[i];
+        
         if (selectedIndex !== i && to.length < 4) {
             const color = from[from.length - 1];
             if (to.length === 0 || to[to.length - 1] === color) {
-                playSound(); // صدا اینجا پخش می‌شود
+                
+                // پخش صدا دقیقا در لحظه جابجایی
+                playPourSound(); 
+                
+                // انتقال رنگ
                 while(from.length > 0 && from[from.length-1] === color && to.length < 4) {
                     to.push(from.pop());
                 }
+                
                 if (checkWin()) {
                     saveProgress();
                     setTimeout(() => {
@@ -108,8 +129,8 @@ function handleTubeClick(i) {
             }
         }
         selectedIndex = null;
+        render();
     }
-    render();
 }
 
 function checkWin() {
@@ -124,4 +145,8 @@ function nextLevel() {
 
 function resetLevel() {
     initGame();
+}
+
+function undo() {
+    // در صورت نیاز به سیستم Undo کد آن را اینجا اضافه کنید
 }
