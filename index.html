@@ -3,28 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AquaSort Master Gold</title>
+    <title>AquaSort Master Gold Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="top-bar">
-        <div id="level-num">LEVEL 12</div>
-        <div class="actions">
-            <button class="icon-btn" onclick="undo()">↩️ Undo</button>
-            <button class="icon-btn" onclick="resetLevel()">🔄</button>
+    <div class="game-ui">
+        <div class="header">
+            <div id="level-display">LEVEL 1</div>
+            <div class="controls">
+                <button class="ui-btn" onclick="undo()">↩️ UNDO</button>
+                <button class="ui-btn" onclick="resetLevel()">🔄 RESET</button>
+            </div>
+        </div>
+
+        <div id="game-board"></div>
+
+        <div id="win-modal" class="modal">
+            <div class="modal-content">
+                <div class="trophy">🏆</div>
+                <h2>FANTASTIC!</h2>
+                <p>Level Completed Successfully</p>
+                <button class="next-btn" onclick="nextLevel()">PLAY NEXT LEVEL</button>
+            </div>
         </div>
     </div>
-    
-    <div id="game-container"></div>
-
-    <div id="win-screen" class="overlay">
-        <div class="congrats-box">
-            <h2>EXCELLENT!</h2>
-            <p>Brain Training Complete</p>
-            <button onclick="nextLevel()">PLAY NEXT LEVEL</button>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
