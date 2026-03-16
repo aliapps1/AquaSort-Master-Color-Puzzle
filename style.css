@@ -8,51 +8,38 @@ body {
     background: var(--bg-dark);
     margin: 0;
     color: white;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
-}
-
-.top-bar {
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    font-weight: bold;
-    font-size: 22px;
-    color: var(--accent);
 }
 
 #game-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr); /* نمایش ۵ بطری در هر ردیف */
-    gap: 15px;
+    gap: 12px;
     padding: 20px;
-    perspective: 1000px;
+    margin-top: 20px;
 }
 
 .tube {
-    width: 50px;
-    height: 160px;
+    width: 45px;
+    height: 150px;
     background: var(--glass);
     border: 2px solid rgba(255,255,255,0.2);
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
     display: flex;
     flex-direction: column-reverse;
     overflow: hidden;
     cursor: pointer;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: 0.3s;
 }
 
 .tube.selected {
-    transform: translateY(-20px) scale(1.05);
+    transform: translateY(-15px);
     border-color: var(--accent);
-    box-shadow: 0 0 20px var(--accent);
+    box-shadow: 0 0 15px var(--accent);
 }
 
 .liquid {
@@ -60,50 +47,11 @@ body {
     height: 24.5%;
     margin-bottom: 1px;
     position: relative;
-    transition: height 0.4s ease;
 }
 
-/* افکت درخشش روی آب برای ظاهر های‌کلاس */
-.liquid::before {
+.liquid::before { /* افکت درخشش روی آب */
     content: '';
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-}
-
-.icon-btn {
-    background: var(--glass);
-    border: 1px solid var(--accent);
-    color: white;
-    padding: 8px 15px;
-    border-radius: 15px;
-    cursor: pointer;
-}
-
-.overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9);
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-}
-
-.congrats-box {
-    text-align: center;
-    background: #1e293b;
-    padding: 50px;
-    border-radius: 30px;
-    border: 2px solid var(--accent);
-}
-
-.congrats-box button {
-    background: var(--accent);
-    border: none;
-    padding: 15px 30px;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 18px;
-    cursor: pointer;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
 }
