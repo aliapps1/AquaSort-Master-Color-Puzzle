@@ -1,57 +1,126 @@
 :root {
-    --bg-dark: #0a0f1e;
+    --bg: #0f172a;
     --accent: #fbbf24;
-    --glass: rgba(255, 255, 255, 0.1);
+    --tube-bg: rgba(255, 255, 255, 0.1);
 }
 
 body {
-    background: var(--bg-dark);
     margin: 0;
+    padding: 0;
+    background-color: var(--bg);
     color: white;
-    font-family: sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+.game-ui {
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-#game-container {
+.header {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+#level-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.ui-btn {
+    background: var(--tube-bg);
+    border: 1px solid var(--accent);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+#game-board {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* نمایش ۵ بطری در هر ردیف */
+    grid-template-columns: repeat(5, 1fr); /* نمایش تا ۵ بطری در هر ردیف */
     gap: 12px;
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .tube {
-    width: 45px;
-    height: 150px;
-    background: var(--glass);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    width: 48px;
+    height: 160px;
+    background: var(--tube-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
     display: flex;
     flex-direction: column-reverse;
     overflow: hidden;
-    cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
 }
 
 .tube.selected {
-    transform: translateY(-15px);
+    transform: translateY(-20px);
     border-color: var(--accent);
-    box-shadow: 0 0 15px var(--accent);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
 
 .liquid {
     width: 100%;
-    height: 24.5%;
+    height: 24.5%; /* هر لایه رنگ */
     margin-bottom: 1px;
     position: relative;
 }
 
-.liquid::before { /* افکت درخشش روی آب */
+.liquid::after {
     content: '';
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    border: 2px solid var(--accent);
+    width: 80%;
+}
+
+.trophy { font-size: 60px; margin-bottom: 10px; }
+
+.next-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 20px;
 }
