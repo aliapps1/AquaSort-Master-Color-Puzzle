@@ -6,11 +6,16 @@ let moveHistory = [];
 
 function playSound(id) {
     const s = document.getElementById(id);
-    if(s) { s.currentTime = 0; s.play().catch(() => {}); }
+    if(s) { 
+        s.volume = 0.5;
+        s.currentTime = 0; 
+        s.play().catch(() => {}); 
+    }
 }
 
 function generateLevel(lvl) {
-    let colorCount = Math.min(3 + Math.floor(lvl / 8), 10);
+    // افزایش تدریجی سختی تا ۱۰۰۰ لول
+    let colorCount = Math.min(3 + Math.floor(lvl / 10), 10);
     let allColors = [];
     for(let i=0; i<colorCount; i++) {
         for(let j=0; j<4; j++) allColors.push(COLORS[i]);
@@ -21,7 +26,7 @@ function generateLevel(lvl) {
     for(let i=0; i<colorCount; i++) {
         newTubes.push(allColors.slice(i*4, (i+1)*4));
     }
-    newTubes.push([]); newTubes.push([]); // همیشه ۲ بطری خالی
+    newTubes.push([]); newTubes.push([]); // دو بطری خالی کمکی
     return newTubes;
 }
 
@@ -36,7 +41,10 @@ function initGame() {
 function render() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
-    board.style.gridTemplateColumns = `repeat(${tubesData.length > 8 ? 4 : 3}, 1fr)`;
+    
+    // چیدمان هوشمند بر اساس تعداد بطری
+    let cols = tubesData.length > 8 ? 5 : (tubesData.length > 5 ? 4 : 3);
+    board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
     tubesData.forEach((colors, i) => {
         const tube = document.createElement('div');
@@ -59,13 +67,19 @@ function handleTubeClick(i) {
         if (selectedIndex !== i) {
             const from = tubesData[selectedIndex], to = tubesData[i];
             const color = from[from.length - 1];
+            
             if (to.length < 4 && (to.length === 0 || to[to.length - 1] === color)) {
                 moveHistory.push(JSON.stringify(tubesData));
-                playSound('pour-sound');
+                playSound('pour-sound'); // صدای ریختن آب
+
                 while (from.length > 0 && from[from.length - 1] === color && to.length < 4) {
                     to.push(from.pop());
                 }
-                if (checkWin()) { playSound('win-sound'); document.getElementById('win-modal').style.display = 'flex'; }
+                
+                if (checkWin()) { 
+                    playSound('win-sound'); 
+                    document.getElementById('win-modal').style.display = 'flex'; 
+                }
             }
         }
         selectedIndex = null;
