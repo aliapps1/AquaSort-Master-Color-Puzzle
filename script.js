@@ -3,20 +3,16 @@ let currentLevel = 1;
 let tubesData = [];
 let selectedIndex = null;
 let moveHistory = [];
-let audioUnlocked = false;
 
-// تابع جدید برای باز کردن قفل صدای مرورگر
-function unlockAudio() {
-    if (!audioUnlocked) {
-        const pour = document.getElementById('pour-sound');
-        const win = document.getElementById('win-sound');
-        
-        // پخش و استاپ سریع برای فعال شدن در مرورگر
-        pour.play().then(() => { pour.pause(); pour.currentTime = 0; });
-        win.play().then(() => { win.pause(); win.currentTime = 0; });
-        
-        audioUnlocked = true;
-        console.log("Audio Unlocked");
+// ۱. سیستم ذخیره‌سازی
+function saveProgress() {
+    localStorage.setItem('aquaSort_currentLevel', currentLevel);
+}
+
+function loadProgress() {
+    const savedLevel = localStorage.getItem('aquaSort_currentLevel');
+    if (savedLevel) {
+        currentLevel = parseInt(savedLevel);
     }
 }
 
@@ -24,8 +20,22 @@ function playSound(id) {
     const s = document.getElementById(id);
     if(s) {
         s.currentTime = 0;
-        s.play().catch(e => console.log("Audio play failed:", e));
+        s.play().catch(e => {});
     }
+}
+
+function startGame() {
+    // بارگذاری آخرین مرحله ذخیره شده
+    loadProgress();
+    
+    document.getElementById('start-screen').style.display = 'none';
+    document.querySelector('.game-ui').style.display = 'flex';
+    
+    const p = document.getElementById('pour-sound');
+    const w = document.getElementById('win-sound');
+    p.load(); w.load();
+    
+    initGame();
 }
 
 function generateLevel(lvl) {
@@ -34,21 +44,31 @@ function generateLevel(lvl) {
     for(let i=0; i<colorCount; i++) {
         for(let j=0; j<4; j++) allColors.push(COLORS[i]);
     }
-    allColors.sort(() => Math.random() - 0.5);
+    
+    // استفاده از لول به عنوان سید برای رندومایزر (برای ثابت ماندن هر مرحله)
+    let seed = lvl; 
+    const random = () => {
+        var x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+    };
+    
+    allColors.sort(() => random() - 0.5);
     
     let newTubes = [];
     for(let i=0; i<colorCount; i++) {
         newTubes.push(allColors.slice(i*4, (i+1)*4));
     }
-    newTubes.push([]); newTubes.push([]);
+    newTubes.push([]);
+    newTubes.push([]);
     return newTubes;
 }
 
 function initGame() {
     tubesData = generateLevel(currentLevel);
-    document.getElementById('level-display').innerText = `LEVEL ${currentLevel}`;
+    document.getElementById('level-number').innerText = currentLevel;
     document.getElementById('win-modal').style.display = 'none';
-    moveHistory = []; selectedIndex = null;
+    moveHistory = [];
+    selectedIndex = null;
     render();
 }
 
@@ -61,10 +81,7 @@ function render() {
     tubesData.forEach((colors, i) => {
         const tube = document.createElement('div');
         tube.className = `tube ${selectedIndex === i ? 'selected' : ''}`;
-        tube.onclick = () => {
-            unlockAudio(); // باز کردن قفل صدا در اولین کلیک
-            handleTubeClick(i);
-        };
+        tube.onclick = () => handleTubeClick(i);
         colors.forEach(c => {
             const liq = document.createElement('div');
             liq.className = 'liquid';
@@ -80,20 +97,29 @@ function handleTubeClick(i) {
         if (tubesData[i].length > 0) selectedIndex = i;
     } else {
         if (selectedIndex !== i) {
-            const from = tubesData[selectedIndex], to = tubesData[i];
+            const from = tubesData[selectedIndex];
+            const to = tubesData[i];
+            if (from.length === 0) {
+                selectedIndex = null;
+                return;
+            }
             const color = from[from.length - 1];
             
             if (to.length < 4 && (to.length === 0 || to[to.length - 1] === color)) {
                 moveHistory.push(JSON.stringify(tubesData));
-                playSound('pour-sound'); 
+                playSound('pour-sound');
 
                 while (from.length > 0 && from[from.length - 1] === color && to.length < 4) {
                     to.push(from.pop());
                 }
                 
-                if (checkWin()) { 
-                    playSound('win-sound'); 
-                    document.getElementById('win-modal').style.display = 'flex'; 
+                if (checkWin()) {
+                    playSound('win-sound');
+                    // ذخیره بلافاصله بعد از پیروزی
+                    saveProgress(); 
+                    setTimeout(() => {
+                        document.getElementById('win-modal').style.display = 'flex';
+                    }, 500);
                 }
             }
         }
@@ -102,9 +128,23 @@ function handleTubeClick(i) {
     render();
 }
 
-function undo() { if (moveHistory.length > 0) { tubesData = JSON.parse(moveHistory.pop()); render(); } }
-function checkWin() { return tubesData.every(t => t.length === 0 || (t.length === 4 && t.every(c => c === t[0]))); }
-function nextLevel() { currentLevel++; initGame(); }
-function resetLevel() { initGame(); }
+function undo() {
+    if (moveHistory.length > 0) {
+        tubesData = JSON.parse(moveHistory.pop());
+        render();
+    }
+}
 
-initGame();
+function checkWin() {
+    return tubesData.every(t => t.length === 0 || (t.length === 4 && t.every(c => c === t[0])));
+}
+
+function nextLevel() {
+    currentLevel++;
+    saveProgress(); // ذخیره لول جدید
+    initGame();
+}
+
+function resetLevel() {
+    initGame();
+}
