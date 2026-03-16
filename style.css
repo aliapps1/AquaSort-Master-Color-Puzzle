@@ -1,7 +1,7 @@
 :root {
-    --bg: #030712;
-    --accent: #60a5fa;
-    --tube-bg: rgba(255, 255, 255, 0.05);
+    --bg: #020617;
+    --accent: #38bdf8;
+    --tube-glass: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -10,40 +10,41 @@ body {
     overflow: hidden; touch-action: manipulation;
 }
 
-.game-ui { width: 100%; max-width: 600px; height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.game-ui { width: 100%; max-width: 500px; height: 100vh; display: flex; flex-direction: column; align-items: center; }
 
 .header { width: 90%; display: flex; justify-content: space-between; padding: 30px 0; }
 
-#level-display { font-size: 26px; font-weight: 300; color: var(--accent); letter-spacing: 3px; }
+#level-display { font-size: 30px; font-weight: 200; color: var(--accent); letter-spacing: 4px; }
 
 #game-board {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
-    padding: 10px; margin-top: 20px;
+    padding: 10px; margin-top: 15px;
 }
 
 .tube {
-    width: 46px; 
-    height: 190px; /* طول بلندتر بطری برای استایل High-Class */
-    background: var(--tube-bg);
-    border: 1.5px solid rgba(255, 255, 255, 0.1);
-    border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+    width: 48px; 
+    height: 210px; /* افزایش ارتفاع بطری برای زیبایی بیشتر */
+    background: var(--tube-glass);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
     display: flex; flex-direction: column-reverse; overflow: hidden;
-    cursor: pointer; position: relative; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer; position: relative; transition: 0.4s ease;
 }
 
-.tube.selected { transform: translateY(-30px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+.tube.selected { transform: translateY(-35px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 
-.liquid { width: 100%; height: 24.5%; margin-bottom: 1px; position: relative; transition: 0.3s; }
+.liquid { width: 100%; height: 24.5%; margin-bottom: 2px; position: relative; border-radius: 4px; }
 
+/* افکت موج و درخشش روی آب */
 .liquid::after {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
 }
 
-.ui-btn { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+.ui-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--accent); color: white; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-size: 14px; }
 
-.modal { display: none; position: fixed; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+.modal { display: none; position: fixed; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
 
-.modal-content { background: #111827; padding: 50px; border-radius: 40px; text-align: center; border: 1px solid var(--accent); }
+.modal-content { background: #0f172a; padding: 60px; border-radius: 40px; text-align: center; border: 1px solid var(--accent); }
 
-.next-btn { background: var(--accent); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+.next-btn { background: var(--accent); color: white; border: none; padding: 18px 45px; border-radius: 35px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 25px; }
