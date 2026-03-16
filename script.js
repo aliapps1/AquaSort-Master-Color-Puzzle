@@ -1,37 +1,27 @@
-const COLORS = ['#FF3D00', '#3D5AFE', '#00E676', '#FFEA00', '#D500F9', '#00B0FF', '#FF9100', '#AEEA00', '#F50057', '#64FFDA'];
-
+const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#a855f7', '#14b8a6'];
 let currentLevel = 1;
 let tubesData = [];
 let selectedIndex = null;
 let moveHistory = [];
 
-// پخش صدای آب
 function playSound(id) {
-    const sound = document.getElementById(id);
-    sound.currentTime = 0;
-    sound.play();
+    const s = document.getElementById(id);
+    if(s) { s.currentTime = 0; s.play().catch(() => {}); }
 }
 
-// تولید مرحله هوشمند (از ۱ تا ۱۰۰۰)
-function generateLevel(level) {
-    let colorCount = Math.min(3 + Math.floor(level / 5), 10); // افزایش تدریجی رنگ‌ها
-    let emptyTubes = 2;
-    let totalTubes = colorCount + emptyTubes;
-    
+function generateLevel(lvl) {
+    let colorCount = Math.min(3 + Math.floor(lvl / 8), 10);
     let allColors = [];
     for(let i=0; i<colorCount; i++) {
         for(let j=0; j<4; j++) allColors.push(COLORS[i]);
     }
-    
-    // مخلوط کردن رنگ‌ها
     allColors.sort(() => Math.random() - 0.5);
     
     let newTubes = [];
     for(let i=0; i<colorCount; i++) {
         newTubes.push(allColors.slice(i*4, (i+1)*4));
     }
-    for(let i=0; i<emptyTubes; i++) newTubes.push([]);
-    
+    newTubes.push([]); newTubes.push([]); // همیشه ۲ بطری خالی
     return newTubes;
 }
 
@@ -39,28 +29,24 @@ function initGame() {
     tubesData = generateLevel(currentLevel);
     document.getElementById('level-display').innerText = `LEVEL ${currentLevel}`;
     document.getElementById('win-modal').style.display = 'none';
-    moveHistory = [];
-    selectedIndex = null;
+    moveHistory = []; selectedIndex = null;
     render();
 }
 
 function render() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
-    
-    // تنظیم خودکار ردیف‌ها برای تعداد بطری زیاد
-    let columns = tubesData.length > 8 ? 4 : (tubesData.length > 5 ? 3 : 3);
-    board.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    board.style.gridTemplateColumns = `repeat(${tubesData.length > 8 ? 4 : 3}, 1fr)`;
 
     tubesData.forEach((colors, i) => {
         const tube = document.createElement('div');
         tube.className = `tube ${selectedIndex === i ? 'selected' : ''}`;
         tube.onclick = () => handleTubeClick(i);
-        colors.forEach(color => {
-            const liquid = document.createElement('div');
-            liquid.className = 'liquid';
-            liquid.style.backgroundColor = color;
-            tube.appendChild(liquid);
+        colors.forEach(c => {
+            const liq = document.createElement('div');
+            liq.className = 'liquid';
+            liq.style.backgroundColor = c;
+            tube.appendChild(liq);
         });
         board.appendChild(tube);
     });
@@ -71,22 +57,15 @@ function handleTubeClick(i) {
         if (tubesData[i].length > 0) selectedIndex = i;
     } else {
         if (selectedIndex !== i) {
-            const from = tubesData[selectedIndex];
-            const to = tubesData[i];
+            const from = tubesData[selectedIndex], to = tubesData[i];
             const color = from[from.length - 1];
-
             if (to.length < 4 && (to.length === 0 || to[to.length - 1] === color)) {
-                moveHistory.push(JSON.parse(JSON.stringify(tubesData)));
-                playSound('pour-sound'); // صدای ریختن آب
-
+                moveHistory.push(JSON.stringify(tubesData));
+                playSound('pour-sound');
                 while (from.length > 0 && from[from.length - 1] === color && to.length < 4) {
                     to.push(from.pop());
                 }
-                
-                if (checkWin()) {
-                    playSound('win-sound');
-                    document.getElementById('win-modal').style.display = 'flex';
-                }
+                if (checkWin()) { playSound('win-sound'); document.getElementById('win-modal').style.display = 'flex'; }
             }
         }
         selectedIndex = null;
@@ -94,22 +73,9 @@ function handleTubeClick(i) {
     render();
 }
 
-function undo() {
-    if (moveHistory.length > 0) {
-        tubesData = moveHistory.pop();
-        render();
-    }
-}
-
-function checkWin() {
-    return tubesData.every(t => t.length === 0 || (t.length === 4 && t.every(c => c === t[0])));
-}
-
-function nextLevel() {
-    currentLevel++;
-    initGame();
-}
-
+function undo() { if (moveHistory.length > 0) { tubesData = JSON.parse(moveHistory.pop()); render(); } }
+function checkWin() { return tubesData.every(t => t.length === 0 || (t.length === 4 && t.every(c => c === t[0]))); }
+function nextLevel() { currentLevel++; initGame(); }
 function resetLevel() { initGame(); }
 
 initGame();
