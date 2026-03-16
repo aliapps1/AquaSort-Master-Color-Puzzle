@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AquaSort Master Gold</title>
+    <title>AquaSort Master Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <audio id="pour-sound" src="https://actions.google.com/sounds/v1/water/water_splash.ogg" preload="auto"></audio>
+    <audio id="pour-sound" src="https://www.soundjay.com/misc/sounds/water-pour-1.mp3" preload="auto"></audio>
     <audio id="win-sound" src="https://actions.google.com/sounds/v1/cartoon/clime_up_reverb.ogg" preload="auto"></audio>
 
-    <div class="game-ui">
+    <div id="start-screen">
+        <div class="start-content">
+            <h1>AQUA SORT</h1>
+            <p>Your progress is auto-saved</p>
+            <button id="start-btn" onclick="startGame()">CONTINUE ADVENTURE</button>
+        </div>
+    </div>
+
+    <div class="game-ui" style="display: none;">
         <div class="header">
-            <div id="level-display">LEVEL 1</div>
-            <div class="controls">
-                <button class="ui-btn" onclick="undo()">↩️ UNDO</button>
-                <button class="ui-btn" onclick="resetLevel()">🔄 RESET</button>
+            <div id="level-tag">LEVEL <span id="level-number">1</span></div>
+            <div class="top-actions">
+                <button class="icon-btn" onclick="undo()">↩️</button>
+                <button class="icon-btn" onclick="resetLevel()">🔄</button>
             </div>
         </div>
-
         <div id="game-board"></div>
-
         <div id="win-modal" class="modal">
-            <div class="modal-content">
-                <div class="stars">✨✨✨</div>
-                <h2>EXCELLENT!</h2>
+            <div class="modal-box">
+                <div class="icon">🏆</div>
+                <h2>LEVEL COMPLETE</h2>
                 <button class="next-btn" onclick="nextLevel()">NEXT LEVEL</button>
             </div>
         </div>
