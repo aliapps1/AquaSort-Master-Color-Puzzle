@@ -3,18 +3,32 @@ let currentLevel = 1;
 let tubesData = [];
 let selectedIndex = null;
 let moveHistory = [];
+let audioUnlocked = false;
+
+// تابع جدید برای باز کردن قفل صدای مرورگر
+function unlockAudio() {
+    if (!audioUnlocked) {
+        const pour = document.getElementById('pour-sound');
+        const win = document.getElementById('win-sound');
+        
+        // پخش و استاپ سریع برای فعال شدن در مرورگر
+        pour.play().then(() => { pour.pause(); pour.currentTime = 0; });
+        win.play().then(() => { win.pause(); win.currentTime = 0; });
+        
+        audioUnlocked = true;
+        console.log("Audio Unlocked");
+    }
+}
 
 function playSound(id) {
     const s = document.getElementById(id);
-    if(s) { 
-        s.volume = 0.5;
-        s.currentTime = 0; 
-        s.play().catch(() => {}); 
+    if(s) {
+        s.currentTime = 0;
+        s.play().catch(e => console.log("Audio play failed:", e));
     }
 }
 
 function generateLevel(lvl) {
-    // افزایش تدریجی سختی تا ۱۰۰۰ لول
     let colorCount = Math.min(3 + Math.floor(lvl / 10), 10);
     let allColors = [];
     for(let i=0; i<colorCount; i++) {
@@ -26,7 +40,7 @@ function generateLevel(lvl) {
     for(let i=0; i<colorCount; i++) {
         newTubes.push(allColors.slice(i*4, (i+1)*4));
     }
-    newTubes.push([]); newTubes.push([]); // دو بطری خالی کمکی
+    newTubes.push([]); newTubes.push([]);
     return newTubes;
 }
 
@@ -41,15 +55,16 @@ function initGame() {
 function render() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
-    
-    // چیدمان هوشمند بر اساس تعداد بطری
     let cols = tubesData.length > 8 ? 5 : (tubesData.length > 5 ? 4 : 3);
     board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
     tubesData.forEach((colors, i) => {
         const tube = document.createElement('div');
         tube.className = `tube ${selectedIndex === i ? 'selected' : ''}`;
-        tube.onclick = () => handleTubeClick(i);
+        tube.onclick = () => {
+            unlockAudio(); // باز کردن قفل صدا در اولین کلیک
+            handleTubeClick(i);
+        };
         colors.forEach(c => {
             const liq = document.createElement('div');
             liq.className = 'liquid';
@@ -70,7 +85,7 @@ function handleTubeClick(i) {
             
             if (to.length < 4 && (to.length === 0 || to[to.length - 1] === color)) {
                 moveHistory.push(JSON.stringify(tubesData));
-                playSound('pour-sound'); // صدای ریختن آب
+                playSound('pour-sound'); 
 
                 while (from.length > 0 && from[from.length - 1] === color && to.length < 4) {
                     to.push(from.pop());
