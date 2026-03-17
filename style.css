@@ -2,7 +2,7 @@ body {
     margin: 0;
     background-color: #0f172a;
     color: white;
-    font-family: sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,74 +13,98 @@ body {
 
 .header {
     width: 100%;
-    padding: 15px 5px;
+    padding: 15px 0;
     display: flex;
     justify-content: space-around;
     align-items: center;
     background: #1e293b;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border-bottom: 2px solid #334155;
 }
 
-#level-tag { font-size: 20px; font-weight: bold; color: #38bdf8; }
+#level-tag { font-size: 22px; font-weight: 800; color: #38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
 
-.top-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.top-actions { display: flex; gap: 8px; }
 
 .icon-btn {
     background: #334155;
     border: 1px solid #475569;
     color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
     font-weight: bold;
+    transition: all 0.2s;
 }
 
-.help-btn { border-color: #22c55e; color: #4ade80; }
+.icon-btn:active { transform: scale(0.9); }
+.help-btn { border-color: #22c55e; color: #4ade80; box-shadow: 0 0 5px rgba(34, 197, 94, 0.3); }
 .skip-btn { border-color: #f59e0b; color: #fbbf24; }
 
 #game-board {
     display: grid;
     gap: 15px;
-    padding: 20px 10px;
+    padding: 40px 10px;
     width: 100%;
     max-width: 450px;
     justify-content: center;
 }
 
+/* بطری حرفه‌ای */
 .tube {
-    width: 50px;
+    width: 52px;
     height: 180px;
     border: 3px solid #64748b;
-    border-radius: 0 0 25px 25px;
+    border-radius: 0 0 26px 26px;
     display: flex;
     flex-direction: column-reverse;
     overflow: hidden;
-    background: rgba(255,255,255,0.05);
-    transition: transform 0.2s;
-    margin: 0 auto;
+    background: rgba(255,255,255,0.03);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
 }
 
 .tube.selected {
-    transform: translateY(-15px);
-    border-color: white;
-    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    transform: translateY(-25px);
+    border-color: #fff;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
 }
 
-.liquid { width: 100%; height: 24.5%; border-top: 1px solid rgba(0,0,0,0.1); }
+/* مایع با انیمیشن تغییر ارتفاع */
+.liquid {
+    width: 100%;
+    height: 24.5%;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    transition: height 0.4s ease-in-out;
+}
+
+/* انیمیشن لرزش برای اشتباه */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+.shake { animation: shake 0.3s ease-in-out; border-color: #ef4444 !important; }
+
+/* انیمیشن درخشش برای بطری کامل شده */
+@keyframes glow {
+    from { box-shadow: 0 0 5px #fff; border-color: #fff; }
+    to { box-shadow: 0 0 20px #38bdf8, 0 0 30px #38bdf8; border-color: #38bdf8; }
+}
+.completed { animation: glow 0.8s infinite alternate; }
 
 .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center;
+    background: rgba(15, 23, 42, 0.95); z-index: 100; justify-content: center; align-items: center;
 }
 
 .modal-box {
-    background: #1e293b; padding: 40px; border-radius: 20px; text-align: center;
-    border: 2px solid #38bdf8;
+    background: #1e293b; padding: 40px; border-radius: 24px; text-align: center;
+    border: 3px solid #38bdf8; box-shadow: 0 0 50px rgba(56, 189, 248, 0.3);
 }
 
 .next-btn {
-    background: #38bdf8; border: none; color: #0f172a; padding: 15px 30px;
-    font-size: 18px; font-weight: bold; border-radius: 10px; margin-top: 20px;
-    cursor: pointer;
+    background: #38bdf8; border: none; color: #0f172a; padding: 16px 32px;
+    font-size: 20px; font-weight: 800; border-radius: 12px; margin-top: 25px;
+    cursor: pointer; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
 }
