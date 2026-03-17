@@ -22,7 +22,7 @@ function playSound(freq = 150, duration = 0.1) {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + duration);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start();
@@ -33,6 +33,7 @@ function initGame() {
     tubesData = generateLevel(currentLevel);
     document.getElementById('level-number').innerText = currentLevel;
     document.getElementById('win-modal').style.display = 'none';
+    moveHistory = [];
     render();
 }
 
@@ -57,8 +58,11 @@ function render() {
 
     tubesData.forEach((colors, i) => {
         const tube = document.createElement('div');
+        // بررسی اینکه آیا بطری کامل شده است (یکرنگ و پر)
         const isComplete = colors.length === 4 && colors.every(c => c === colors[0]);
+        
         tube.className = `tube ${selectedIndex === i ? 'selected' : ''} ${isComplete ? 'completed' : ''}`;
+        tube.id = `tube-${i}`; // آی‌دی برای دسترسی مستقیم در انیمیشن لرزش
         tube.onclick = () => handleTubeClick(i);
         
         colors.forEach(c => {
@@ -73,8 +77,6 @@ function render() {
 
 function handleTubeClick(i) {
     initAudio();
-    const tubeElements = document.querySelectorAll('.tube');
-
     if (selectedIndex === null) {
         if (tubesData[i].length > 0) {
             selectedIndex = i;
@@ -85,9 +87,10 @@ function handleTubeClick(i) {
         const to = tubesData[i];
         
         if (selectedIndex !== i) {
+            // منطق حرکت درست
             if (to.length < 4 && (to.length === 0 || to[to.length - 1] === from[from.length - 1])) {
                 moveHistory.push(JSON.stringify(tubesData));
-                playSound(200, 0.15); // صدای ریختن
+                playSound(200, 0.15);
                 
                 const color = from[from.length - 1];
                 while(from.length > 0 && from[from.length-1] === color && to.length < 4) {
@@ -96,15 +99,20 @@ function handleTubeClick(i) {
                 
                 if (checkWin()) {
                     setTimeout(() => {
-                        playSound(400, 0.5); // صدای پیروزی
+                        playSound(400, 0.5);
                         document.getElementById('win-modal').style.display = 'flex';
                     }, 500);
                 }
             } else {
-                // افکت لرزش برای حرکت اشتباه
-                tubeElements[i].classList.add('shake');
-                playSound(100, 0.2); // صدای اخطار
-                setTimeout(() => render(), 300);
+                // --- بخش جدید: افکت لرزش برای اشتباه ---
+                const tubeElement = document.getElementById(`tube-${i}`);
+                if (tubeElement) {
+                    tubeElement.classList.add('shake');
+                    playSound(100, 0.2); // صدای بم برای خطا
+                    setTimeout(() => {
+                        tubeElement.classList.remove('shake');
+                    }, 300);
+                }
             }
         }
         selectedIndex = null;
@@ -121,7 +129,7 @@ function addExtraTube() {
 }
 
 function skipLevel() {
-    if(confirm("Skip?")) { currentLevel++; initGame(); }
+    if(confirm("Skip?")) { currentLevel++; saveProgress(); initGame(); }
 }
 
 function undo() {
@@ -137,12 +145,16 @@ function checkWin() {
 
 function nextLevel() {
     currentLevel++;
-    localStorage.setItem('waterSort_save', currentLevel);
+    saveProgress();
     initGame();
 }
 
 function resetLevel() {
     initGame();
+}
+
+function saveProgress() {
+    localStorage.setItem('waterSort_save', currentLevel);
 }
 
 function loadProgress() {
