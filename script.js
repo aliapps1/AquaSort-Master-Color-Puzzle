@@ -20,8 +20,8 @@ function playPourSound() {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.1);
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
@@ -118,7 +118,7 @@ function addExtraTube() {
 }
 
 function skipLevel() {
-    if(confirm("Skip this level?")) nextLevel();
+    if(confirm("Skip to next level?")) nextLevel();
 }
 
 function undo() {
