@@ -35,9 +35,6 @@ body {
     font-weight: bold;
 }
 
-.help-btn { border-color: #22c55e; color: #4ade80; }
-.skip-btn { border-color: #f59e0b; color: #fbbf24; }
-
 #game-board {
     display: grid;
     gap: 15px;
@@ -56,7 +53,7 @@ body {
     flex-direction: column-reverse;
     overflow: hidden;
     background: rgba(255,255,255,0.05);
-    transition: transform 0.3s;
+    transition: all 0.3s;
     margin: 0 auto;
 }
 
@@ -69,24 +66,30 @@ body {
 .liquid {
     width: 100%;
     height: 24.5%;
-    border-top: 2px solid rgba(0,0,0,0.2); /* خط جداکننده تیره بین رنگ‌ها */
+    border-top: 2px solid rgba(0,0,0,0.2);
     transition: height 0.4s;
 }
 
-/* انیمیشن لرزش */
+/* افکت لحظه‌ای انفجار نور و حرکت بطری هنگام تکمیل شدن */
+@keyframes successPop {
+    0% { transform: scale(1); box-shadow: 0 0 0px #fff; }
+    50% { transform: scale(1.1); box-shadow: 0 0 30px #fff; border-color: #fff; }
+    100% { transform: scale(1); box-shadow: 0 0 0px #fff; }
+}
+.success-pop { animation: successPop 0.8s ease-out; }
+
+/* وضعیت ثابت بطری کامل شده - بدون چشمک زدن */
+.completed-static {
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-6px); }
     75% { transform: translateX(6px); }
 }
 .shake { animation: shake 0.3s ease-in-out; border-color: #ef4444 !important; }
-
-/* انیمیشن درخشش */
-@keyframes glow {
-    from { box-shadow: 0 0 5px #fff; border-color: #fff; }
-    to { box-shadow: 0 0 20px #38bdf8, 0 0 30px #38bdf8; border-color: #38bdf8; }
-}
-.completed { animation: glow 0.8s infinite alternate; }
 
 .modal {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -101,5 +104,4 @@ body {
 .next-btn {
     background: #38bdf8; border: none; color: #0f172a; padding: 15px 30px;
     font-size: 18px; font-weight: bold; border-radius: 10px; margin-top: 20px;
-    cursor: pointer;
 }
