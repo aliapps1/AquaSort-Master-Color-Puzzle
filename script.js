@@ -4,7 +4,7 @@ let selectedIndex = null;
 let moveHistory = [];
 let audioCtx = null;
 
-const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#a855f7', '#14b8a6'];
+const COLORS = ['#38bdf8', '#fb7185', '#34d399', '#fbbf24', '#818cf8', '#f472b6', '#2dd4bf', '#fb923c', '#a78bfa', '#a3e635'];
 
 window.onload = () => {
     loadProgress();
@@ -15,34 +15,24 @@ function initAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-function playPourSound() {
+function playSound(freq = 150, duration = 0.1) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + duration);
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.1);
-}
-
-function loadProgress() {
-    const saved = localStorage.getItem('waterSort_save');
-    if (saved) currentLevel = parseInt(saved);
-}
-
-function saveProgress() {
-    localStorage.setItem('waterSort_save', currentLevel);
+    osc.stop(audioCtx.currentTime + duration);
 }
 
 function initGame() {
     tubesData = generateLevel(currentLevel);
     document.getElementById('level-number').innerText = currentLevel;
     document.getElementById('win-modal').style.display = 'none';
-    moveHistory = [];
     render();
 }
 
@@ -67,8 +57,10 @@ function render() {
 
     tubesData.forEach((colors, i) => {
         const tube = document.createElement('div');
-        tube.className = `tube ${selectedIndex === i ? 'selected' : ''}`;
+        const isComplete = colors.length === 4 && colors.every(c => c === colors[0]);
+        tube.className = `tube ${selectedIndex === i ? 'selected' : ''} ${isComplete ? 'completed' : ''}`;
         tube.onclick = () => handleTubeClick(i);
+        
         colors.forEach(c => {
             const liq = document.createElement('div');
             liq.className = 'liquid';
@@ -81,6 +73,8 @@ function render() {
 
 function handleTubeClick(i) {
     initAudio();
+    const tubeElements = document.querySelectorAll('.tube');
+
     if (selectedIndex === null) {
         if (tubesData[i].length > 0) {
             selectedIndex = i;
@@ -89,18 +83,28 @@ function handleTubeClick(i) {
     } else {
         const from = tubesData[selectedIndex];
         const to = tubesData[i];
-        if (selectedIndex !== i && to.length < 4) {
-            const color = from[from.length - 1];
-            if (to.length === 0 || to[to.length - 1] === color) {
+        
+        if (selectedIndex !== i) {
+            if (to.length < 4 && (to.length === 0 || to[to.length - 1] === from[from.length - 1])) {
                 moveHistory.push(JSON.stringify(tubesData));
-                playPourSound();
+                playSound(200, 0.15); // صدای ریختن
+                
+                const color = from[from.length - 1];
                 while(from.length > 0 && from[from.length-1] === color && to.length < 4) {
                     to.push(from.pop());
                 }
+                
                 if (checkWin()) {
-                    saveProgress();
-                    setTimeout(() => document.getElementById('win-modal').style.display = 'flex', 500);
+                    setTimeout(() => {
+                        playSound(400, 0.5); // صدای پیروزی
+                        document.getElementById('win-modal').style.display = 'flex';
+                    }, 500);
                 }
+            } else {
+                // افکت لرزش برای حرکت اشتباه
+                tubeElements[i].classList.add('shake');
+                playSound(100, 0.2); // صدای اخطار
+                setTimeout(() => render(), 300);
             }
         }
         selectedIndex = null;
@@ -110,15 +114,14 @@ function handleTubeClick(i) {
 
 function addExtraTube() {
     initAudio();
-    if (tubesData.length < 14) {
+    if (tubesData.length < 15) {
         tubesData.push([]);
-        playPourSound();
         render();
     }
 }
 
 function skipLevel() {
-    if(confirm("Skip to next level?")) nextLevel();
+    if(confirm("Skip?")) { currentLevel++; initGame(); }
 }
 
 function undo() {
@@ -134,10 +137,15 @@ function checkWin() {
 
 function nextLevel() {
     currentLevel++;
-    saveProgress();
+    localStorage.setItem('waterSort_save', currentLevel);
     initGame();
 }
 
 function resetLevel() {
     initGame();
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem('waterSort_save');
+    if (saved) currentLevel = parseInt(saved);
 }
