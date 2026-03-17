@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Water Sort Pro</title>
+    <title>Water Sort Elite</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,8 +11,10 @@
         <div class="header">
             <div id="level-tag">LEVEL <span id="level-number">1</span></div>
             <div class="top-actions">
-                <button class="icon-btn" onclick="undo()">↩️ UNDO</button>
-                <button class="icon-btn" onclick="resetLevel()">🔄 RESET</button>
+                <button class="icon-btn help-btn" onclick="addExtraTube()">➕ TUBE</button>
+                <button class="icon-btn skip-btn" onclick="skipLevel()">⏭️ SKIP</button>
+                <button class="icon-btn" onclick="undo()">↩️</button>
+                <button class="icon-btn" onclick="resetLevel()">🔄</button>
             </div>
         </div>
         <div id="game-board"></div>
