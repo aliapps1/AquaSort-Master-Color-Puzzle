@@ -23,16 +23,17 @@ body {
 
 #level-tag { font-size: 20px; font-weight: bold; color: #38bdf8; }
 
-.top-actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.top-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 
 .icon-btn {
     background: #334155;
     border: 1px solid #475569;
     color: white;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: 12px;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .help-btn { border-color: #22c55e; color: #4ade80; }
@@ -40,18 +41,18 @@ body {
 
 #game-board {
     display: grid;
-    gap: 12px;
+    gap: 15px;
     padding: 20px 10px;
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     justify-content: center;
 }
 
 .tube {
-    width: 45px;
-    height: 160px;
+    width: 50px;
+    height: 180px;
     border: 3px solid #64748b;
-    border-radius: 0 0 20px 20px;
+    border-radius: 0 0 25px 25px;
     display: flex;
     flex-direction: column-reverse;
     overflow: hidden;
@@ -63,7 +64,7 @@ body {
 .tube.selected {
     transform: translateY(-15px);
     border-color: white;
-    box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
 
 .liquid { width: 100%; height: 24.5%; border-top: 1px solid rgba(0,0,0,0.1); }
@@ -74,11 +75,12 @@ body {
 }
 
 .modal-box {
-    background: #1e293b; padding: 30px; border-radius: 20px; text-align: center;
+    background: #1e293b; padding: 40px; border-radius: 20px; text-align: center;
     border: 2px solid #38bdf8;
 }
 
 .next-btn {
-    background: #38bdf8; border: none; color: #0f172a; padding: 12px 24px;
-    font-size: 16px; font-weight: bold; border-radius: 8px; margin-top: 20px;
+    background: #38bdf8; border: none; color: #0f172a; padding: 15px 30px;
+    font-size: 18px; font-weight: bold; border-radius: 10px; margin-top: 20px;
+    cursor: pointer;
 }
