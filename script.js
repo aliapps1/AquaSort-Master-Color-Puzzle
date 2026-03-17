@@ -4,18 +4,17 @@ let selectedIndex = null;
 let moveHistory = [];
 let audioCtx = null;
 
-// رنگ‌های جدید با تضاد بسیار بالا برای تشخیص راحت‌تر
 const COLORS = [
     '#FF0000', // قرمز
     '#00FF00', // سبز
     '#0066FF', // آبی
     '#FFFF00', // زرد
-    '#FF00FF', // بنفش/صورتی
+    '#FF00FF', // بنفش
     '#00FFFF', // فیروزه‌ای
     '#FF8000', // نارنجی
     '#FFFFFF', // سفید
     '#800000', // زرشکی
-    '#008080'  // سبز تیره
+    '#008080'  // تیره
 ];
 
 window.onload = () => {
@@ -81,7 +80,8 @@ function render() {
         const tube = document.createElement('div');
         const isComplete = colors.length === 4 && colors.every(c => c === colors[0]);
         
-        tube.className = `tube ${selectedIndex === i ? 'selected' : ''} ${isComplete ? 'completed' : ''}`;
+        // اگر کامل باشد کلاس completed-static می‌گیرد که فقط یک حاشیه ثابت سفید دارد
+        tube.className = `tube ${selectedIndex === i ? 'selected' : ''} ${isComplete ? 'completed-static' : ''}`;
         tube.id = `tube-${i}`;
         tube.onclick = () => handleTubeClick(i);
         
@@ -116,12 +116,17 @@ function handleTubeClick(i) {
                     to.push(from.pop());
                 }
                 
+                // افکت لحظه‌ای پیروزی در صورت کامل شدن بطری
+                if (to.length === 4 && to.every(c => c === to[0])) {
+                    triggerSuccessEffect(i);
+                }
+
                 if (checkWin()) {
                     saveProgress();
                     setTimeout(() => {
                         playSound(400, 0.5);
                         document.getElementById('win-modal').style.display = 'flex';
-                    }, 500);
+                    }, 800);
                 }
             } else {
                 const tubeElement = document.getElementById(`tube-${i}`);
@@ -137,21 +142,27 @@ function handleTubeClick(i) {
     }
 }
 
+function triggerSuccessEffect(index) {
+    setTimeout(() => {
+        const el = document.getElementById(`tube-${index}`);
+        if (el) {
+            el.classList.add('success-pop');
+            playSound(300, 0.2);
+            setTimeout(() => el.classList.remove('success-pop'), 1000);
+        }
+    }, 100);
+}
+
 function addExtraTube() {
     initAudio();
     if (tubesData.length < 15) {
         tubesData.push([]);
-        playSound(250, 0.2);
         render();
     }
 }
 
 function skipLevel() {
-    if(confirm("Skip this level?")) {
-        currentLevel++;
-        saveProgress();
-        initGame();
-    }
+    if(confirm("Skip?")) { currentLevel++; saveProgress(); initGame(); }
 }
 
 function undo() {
