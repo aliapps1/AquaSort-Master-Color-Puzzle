@@ -1,153 +1,84 @@
-/* تنظیمات کلی صفحه */
 body {
     margin: 0;
-    padding: 0;
-    background-color: #0a0e14; /* رنگ پس‌زمینه تیره و حرفه‌ای */
+    background-color: #0f172a;
     color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden; /* جلوگیری از اسکرول خوردن بیهوده */
-    user-select: none; /* جلوگیری از انتخاب شدن متن‌ها */
-    -webkit-tap-highlight-color: transparent; /* حذف هاله آبی هنگام کلیک در موبایل */
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* بخش هدر و نمایش لول */
 .header {
     width: 100%;
-    padding: 20px;
+    padding: 15px 5px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    background: #1e293b;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
 
-#level-tag {
-    font-size: 24px;
-    font-weight: bold;
-    color: #4fc3f7;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+#level-tag { font-size: 20px; font-weight: bold; color: #38bdf8; }
 
-.top-actions {
-    display: flex;
-    gap: 10px;
-}
+.top-actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
 
 .icon-btn {
-    background: #1e2630;
-    border: 1px solid #4fc3f7;
+    background: #334155;
+    border: 1px solid #475569;
     color: white;
-    padding: 8px 15px;
-    border-radius: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
     cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
 }
 
-.icon-btn:active {
-    transform: scale(0.9);
-    background: #4fc3f7;
-}
-
-/* محیط اصلی بازی */
-.game-ui {
-    display: flex; /* نمایش بلافاصله بازی */
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-}
+.help-btn { border-color: #22c55e; color: #4ade80; }
+.skip-btn { border-color: #f59e0b; color: #fbbf24; }
 
 #game-board {
     display: grid;
-    gap: 15px;
-    padding: 30px 10px;
-    width: 95%;
-    max-width: 450px;
+    gap: 12px;
+    padding: 20px 10px;
+    width: 100%;
+    max-width: 400px;
     justify-content: center;
-    margin-top: 20px;
 }
 
-/* استایل بطری‌ها - شبیه به تصاویری که فرستادید */
 .tube {
-    width: 50px;
-    height: 180px; /* قد بلند برای جذابیت بیشتر */
-    border: 3px solid #555;
-    border-radius: 0 0 25px 25px;
+    width: 45px;
+    height: 160px;
+    border: 3px solid #64748b;
+    border-radius: 0 0 20px 20px;
     display: flex;
-    flex-direction: column-reverse; /* چیدمان رنگ از پایین به بالا */
+    flex-direction: column-reverse;
     overflow: hidden;
-    position: relative;
-    background-color: rgba(255, 255, 255, 0.07);
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
+    background: rgba(255,255,255,0.05);
+    transition: transform 0.2s;
+    margin: 0 auto;
 }
 
-/* حالت انتخاب شدن بطری */
 .tube.selected {
-    transform: translateY(-20px);
-    border-color: #fff;
-    box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+    transform: translateY(-15px);
+    border-color: white;
+    box-shadow: 0 0 15px rgba(255,255,255,0.3);
 }
 
-/* استایل رنگ‌های داخل بطری */
-.liquid {
-    width: 100%;
-    height: 24.5%; /* ۴ لایه رنگی */
-    border-top: 1px solid rgba(0,0,0,0.15);
-}
+.liquid { width: 100%; height: 24.5%; border-top: 1px solid rgba(0,0,0,0.1); }
 
-/* مودال پیروزی (Win Screen) */
 .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.85);
-    z-index: 100;
-    justify-content: center;
-    align-items: center;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center;
 }
 
 .modal-box {
-    background: #1e2630;
-    padding: 40px;
-    border-radius: 20px;
-    text-align: center;
-    border: 2px solid #4fc3f7;
-    box-shadow: 0 0 30px rgba(79, 195, 247, 0.4);
-}
-
-.modal-box .icon {
-    font-size: 60px;
-    margin-bottom: 15px;
+    background: #1e293b; padding: 30px; border-radius: 20px; text-align: center;
+    border: 2px solid #38bdf8;
 }
 
 .next-btn {
-    background: #4fc3f7;
-    border: none;
-    color: #0a0e14;
-    padding: 15px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: 0.2s;
-}
-
-.next-btn:hover {
-    background: #fff;
-    transform: scale(1.05);
-}
-
-/* حذف صفحه شروع از استایل چون در HTML هم حذفش کردیم */
-#start-screen {
-    display: none;
+    background: #38bdf8; border: none; color: #0f172a; padding: 12px 24px;
+    font-size: 16px; font-weight: bold; border-radius: 8px; margin-top: 20px;
 }
