@@ -52,6 +52,10 @@ function saveProgress() {
 function initGame() {
     tubesData = generateLevel(currentLevel);
     document.getElementById('level-number').innerText = currentLevel;
+
+    const startEl = document.getElementById('start-level');
+    if (startEl) startEl.innerText = currentLevel;
+
     document.getElementById('win-modal').style.display = 'none';
     moveHistory = [];
     render();
